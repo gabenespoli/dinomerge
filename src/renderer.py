@@ -26,12 +26,12 @@ class Renderer:
                 y = offset_y + row * SLOT_SIZE
                 
                 if is_enemy:
-                    if row >= GRID_HEIGHT - FRONT_LINE_ROWS:
+                    if col < FRONT_LINE_COLS:
                         slot_color = COLORS['front_line']
                     else:
                         slot_color = COLORS['back_line']
                 else:
-                    if row < FRONT_LINE_ROWS:
+                    if col >= GRID_WIDTH - FRONT_LINE_COLS:
                         slot_color = COLORS['front_line']
                     else:
                         slot_color = COLORS['back_line']
@@ -180,9 +180,10 @@ class Renderer:
         self.draw_grid(game.grid, player_offset_x, 120, is_enemy=False)
         self.draw_grid(game.enemy_grid, enemy_offset_x, 120, is_enemy=True)
         
-        front_label = self.font_small.render("Front →", True, COLORS['text_dark'])
-        self.screen.blit(front_label, (player_offset_x + 80, 120 - 20))
-        self.screen.blit(front_label, (enemy_offset_x + 80, 120 - 20))
+        front_label_player = self.font_small.render("← Front", True, COLORS['text_dark'])
+        front_label_enemy = self.font_small.render("Front →", True, COLORS['text_dark'])
+        self.screen.blit(front_label_player, (player_offset_x + GRID_WIDTH * SLOT_SIZE - 60, 120 - 20))
+        self.screen.blit(front_label_enemy, (enemy_offset_x + 5, 120 - 20))
         
         shop_x = 40
         shop_y = 120 + GRID_HEIGHT * SLOT_SIZE + 30
