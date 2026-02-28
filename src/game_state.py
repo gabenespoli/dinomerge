@@ -26,7 +26,7 @@ class DinoMergeGame:
     
     def initialize_starting_army(self):
         front_col_start = GRID_WIDTH - FRONT_LINE_COLS
-        for i in range(3):
+        for i in range(4):
             col = front_col_start + (i % FRONT_LINE_COLS)
             row = i // FRONT_LINE_COLS
             dino = Dinosaur(1)
