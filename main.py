@@ -50,7 +50,9 @@ class DinoMergeApp:
             self.handle_defeat_click()
     
     def handle_army_click(self, pos):
-        slot = self.game.grid.get_slot_at(pos[0], pos[1])
+        player_offset_x = 40
+        player_offset_y = 120
+        slot = self.game.grid.get_slot_at(pos[0], pos[1], player_offset_x, player_offset_y)
         
         if slot:
             row, col = slot
@@ -59,11 +61,12 @@ class DinoMergeApp:
                 self.dragging_dino = dino
                 self.drag_from_pos = slot
         
-        shop_y = GRID_OFFSET_Y + GRID_HEIGHT * SLOT_SIZE + 30 + 40
+        shop_x = 50
+        shop_y = 120 + GRID_HEIGHT * SLOT_SIZE + 30 + 35
         for level in range(1, 11):
-            btn_x = GRID_OFFSET_X + ((level - 1) % 5) * 170
+            btn_x = shop_x + ((level - 1) % 5) * 130
             btn_y = shop_y + ((level - 1) // 5) * 70
-            btn_rect = pygame.Rect(btn_x, btn_y, 160, 60)
+            btn_rect = pygame.Rect(btn_x, btn_y, 120, 60)
             
             if btn_rect.collidepoint(pos):
                 price = self.shop.get_price(level)
@@ -76,7 +79,9 @@ class DinoMergeApp:
     
     def handle_release(self, pos):
         if self.dragging_dino and self.drag_from_pos:
-            slot = self.game.grid.get_slot_at(pos[0], pos[1])
+            player_offset_x = 40
+            player_offset_y = 120
+            slot = self.game.grid.get_slot_at(pos[0], pos[1], player_offset_x, player_offset_y)
             if slot:
                 from_row, from_col = self.drag_from_pos
                 to_row, to_col = slot

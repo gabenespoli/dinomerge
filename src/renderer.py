@@ -26,7 +26,7 @@ class Renderer:
                 y = offset_y + row * SLOT_SIZE
                 
                 if is_enemy:
-                    if row >= 3:
+                    if row >= GRID_HEIGHT - FRONT_LINE_ROWS:
                         slot_color = COLORS['front_line']
                     else:
                         slot_color = COLORS['back_line']
@@ -163,32 +163,44 @@ class Renderer:
     def draw_army_view(self, game: DinoMergeGame):
         self.draw_background()
         
-        title_text = self.font_large.render("Your Army", True, COLORS['text'])
-        self.screen.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() // 2, 85))
-        
-        front_label = self.font_small.render("Front Line (1.5x Defense)", True, COLORS['text_dark'])
-        self.screen.blit(front_label, (GRID_OFFSET_X, GRID_OFFSET_Y - 20))
-        
-        self.draw_grid(game.grid, GRID_OFFSET_X, GRID_OFFSET_Y)
-        
         self.draw_ui_header(game)
         
-        shop_y = GRID_OFFSET_Y + GRID_HEIGHT * SLOT_SIZE + 30
-        shop_title = self.font_medium.render("Shop", True, COLORS['text'])
-        self.screen.blit(shop_title, (GRID_OFFSET_X, shop_y))
+        player_offset_x = 40
+        enemy_offset_x = SCREEN_WIDTH // 2 + 20
         
-        shop_start_x = GRID_OFFSET_X
-        shop_y += 40
+        player_label = self.font_medium.render("Your Army", True, (100, 200, 100))
+        self.screen.blit(player_label, (player_offset_x, 85))
+        
+        enemy_label = self.font_medium.render("Enemy (Next Battle)", True, (200, 100, 100))
+        self.screen.blit(enemy_label, (enemy_offset_x, 85))
+        
+        if not game.enemy_grid.get_all_dinosaurs():
+            game.generate_enemy_army(game.current_level)
+        
+        self.draw_grid(game.grid, player_offset_x, 120, is_enemy=False)
+        self.draw_grid(game.enemy_grid, enemy_offset_x, 120, is_enemy=True)
+        
+        front_label = self.font_small.render("Front →", True, COLORS['text_dark'])
+        self.screen.blit(front_label, (player_offset_x + 80, 120 - 20))
+        self.screen.blit(front_label, (enemy_offset_x + 80, 120 - 20))
+        
+        shop_x = 40
+        shop_y = 120 + GRID_HEIGHT * SLOT_SIZE + 30
+        shop_title = self.font_medium.render("Shop", True, COLORS['text'])
+        self.screen.blit(shop_title, (shop_x, shop_y))
+        
+        shop_x += 10
+        shop_y += 35
         
         for level in range(1, 11):
             price = self.shop.get_price(level)
             info = self.shop.get_dinosaur_info(level)
             can_buy = game.tokens >= price and game.grid.count_empty_slots() > 0
             
-            btn_x = shop_start_x + ((level - 1) % 5) * 170
+            btn_x = shop_x + ((level - 1) % 5) * 130
             btn_y = shop_y + ((level - 1) // 5) * 70
             
-            btn_rect = pygame.Rect(btn_x, btn_y, 160, 60)
+            btn_rect = pygame.Rect(btn_x, btn_y, 120, 60)
             is_hovered = btn_rect.collidepoint(pygame.mouse.get_pos()) and can_buy
             
             if can_buy:
@@ -199,14 +211,14 @@ class Renderer:
             pygame.draw.rect(self.screen, color, btn_rect, border_radius=5)
             pygame.draw.rect(self.screen, COLORS['text'], btn_rect, 2, border_radius=5)
             
-            name_text = self.font_small.render(f"Lv{level} {info.get('name', '')}", True, COLORS['text'])
+            name_text = self.font_small.render(f"Lv{level}", True, COLORS['text'])
             self.screen.blit(name_text, (btn_x + 5, btn_y + 5))
             
-            price_text = self.font_small.render(f"{price} tokens", True, COLORS['text'])
-            self.screen.blit(price_text, (btn_x + 5, btn_y + 30))
+            price_text = self.font_small.render(f"{price}", True, COLORS['text'])
+            self.screen.blit(price_text, (btn_x + 5, btn_y + 22))
             
-            hp_text = self.font_small.render(f"HP:{info.get('hp', 0)} ATK:{info.get('attack', 0)}", True, COLORS['text_dark'])
-            self.screen.blit(hp_text, (btn_x + 5, btn_y + 45))
+            hp_text = self.font_small.render(f"HP:{info.get('hp', 0)}", True, COLORS['text_dark'])
+            self.screen.blit(hp_text, (btn_x + 5, btn_y + 40))
     
     def draw_battle_view(self, game: DinoMergeGame, battle: Battle):
         self.draw_background()
@@ -214,17 +226,17 @@ class Renderer:
         title_text = self.font_large.render(f"Battle - Level {game.current_level}", True, COLORS['text'])
         self.screen.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() // 2, 20))
         
-        enemy_offset_x = SCREEN_WIDTH // 2 + 20
         player_offset_x = 40
-        
-        enemy_label = self.font_medium.render("Enemy Army", True, (200, 100, 100))
-        self.screen.blit(enemy_label, (enemy_offset_x, 80))
+        enemy_offset_x = SCREEN_WIDTH // 2 + 20
         
         player_label = self.font_medium.render("Your Army", True, (100, 200, 100))
-        self.screen.blit(player_label, (player_offset_x, SCREEN_HEIGHT - 200))
+        self.screen.blit(player_label, (player_offset_x, 85))
         
+        enemy_label = self.font_medium.render("Enemy Army", True, (200, 100, 100))
+        self.screen.blit(enemy_label, (enemy_offset_x, 85))
+        
+        self.draw_grid(game.grid, player_offset_x, 120, is_enemy=False)
         self.draw_grid(game.enemy_grid, enemy_offset_x, 120, is_enemy=True)
-        self.draw_grid(game.grid, player_offset_x, SCREEN_HEIGHT - 280, is_enemy=False)
         
         if battle.last_attack:
             attack_text = self.font_medium.render(

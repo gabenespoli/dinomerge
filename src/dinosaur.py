@@ -1,5 +1,5 @@
 import uuid
-from src.constants import DINOSAURS
+from src.constants import DINOSAURS, GRID_HEIGHT, FRONT_LINE_ROWS
 
 
 class Dinosaur:
@@ -23,9 +23,9 @@ class Dinosaur:
     def is_front_line(self) -> bool:
         if self.grid_y is not None:
             if self.is_enemy:
-                return self.grid_y >= 3
+                return self.grid_y >= GRID_HEIGHT - FRONT_LINE_ROWS
             else:
-                return self.grid_y < 2
+                return self.grid_y < FRONT_LINE_ROWS
         return False
     
     def take_damage(self, damage: float):

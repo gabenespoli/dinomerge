@@ -10,11 +10,11 @@ class Grid:
         self.dragging = None
         self.drag_start = None
     
-    def get_slot_at(self, x: int, y: int) -> tuple[int, int] | None:
+    def get_slot_at(self, x: int, y: int, offset_x: int = GRID_OFFSET_X, offset_y: int = GRID_OFFSET_Y) -> tuple[int, int] | None:
         for row in range(self.height):
             for col in range(self.width):
-                slot_x = GRID_OFFSET_X + col * SLOT_SIZE
-                slot_y = GRID_OFFSET_Y + row * SLOT_SIZE
+                slot_x = offset_x + col * SLOT_SIZE
+                slot_y = offset_y + row * SLOT_SIZE
                 if (slot_x <= x <= slot_x + SLOT_SIZE and 
                     slot_y <= y <= slot_y + SLOT_SIZE):
                     return (row, col)

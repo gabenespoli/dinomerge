@@ -22,6 +22,7 @@ class DinoMergeGame:
         self.enemy_grid = Grid()
         self.battle_result = None
         self.initialize_starting_army()
+        self.generate_enemy_army(self.current_level)
     
     def initialize_starting_army(self):
         for i in range(3):
@@ -60,6 +61,7 @@ class DinoMergeGame:
     def next_level(self):
         if self.current_level < MAX_LEVEL:
             self.current_level += 1
+            self.generate_enemy_army(self.current_level)
         else:
             self.current_level = MAX_LEVEL
     
