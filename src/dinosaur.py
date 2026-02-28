@@ -22,7 +22,10 @@ class Dinosaur:
     @property
     def is_front_line(self) -> bool:
         if self.grid_y is not None:
-            return self.grid_y < 2
+            if self.is_enemy:
+                return self.grid_y >= 3
+            else:
+                return self.grid_y < 2
         return False
     
     def take_damage(self, damage: float):

@@ -25,10 +25,16 @@ class Renderer:
                 x = offset_x + col * SLOT_SIZE
                 y = offset_y + row * SLOT_SIZE
                 
-                if row < FRONT_LINE_ROWS:
-                    slot_color = COLORS['front_line']
+                if is_enemy:
+                    if row >= 3:
+                        slot_color = COLORS['front_line']
+                    else:
+                        slot_color = COLORS['back_line']
                 else:
-                    slot_color = COLORS['back_line']
+                    if row < FRONT_LINE_ROWS:
+                        slot_color = COLORS['front_line']
+                    else:
+                        slot_color = COLORS['back_line']
                 
                 pygame.draw.rect(self.screen, slot_color, 
                                (x, y, SLOT_SIZE, SLOT_SIZE), 2)
@@ -208,24 +214,24 @@ class Renderer:
         title_text = self.font_large.render(f"Battle - Level {game.current_level}", True, COLORS['text'])
         self.screen.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() // 2, 20))
         
-        player_offset_x = 40
         enemy_offset_x = SCREEN_WIDTH // 2 + 20
-        
-        player_label = self.font_medium.render("Your Army", True, (100, 200, 100))
-        self.screen.blit(player_label, (player_offset_x, 80))
+        player_offset_x = 40
         
         enemy_label = self.font_medium.render("Enemy Army", True, (200, 100, 100))
         self.screen.blit(enemy_label, (enemy_offset_x, 80))
         
-        self.draw_grid(game.grid, player_offset_x, 120, is_enemy=False)
+        player_label = self.font_medium.render("Your Army", True, (100, 200, 100))
+        self.screen.blit(player_label, (player_offset_x, SCREEN_HEIGHT - 200))
+        
         self.draw_grid(game.enemy_grid, enemy_offset_x, 120, is_enemy=True)
+        self.draw_grid(game.grid, player_offset_x, SCREEN_HEIGHT - 280, is_enemy=False)
         
         if battle.last_attack:
             attack_text = self.font_medium.render(
                 f"{battle.last_attack['attacker'].name} attacks {battle.last_attack['target'].name} for {int(battle.last_attack['damage'])}!",
                 True, COLORS['highlight']
             )
-            self.screen.blit(attack_text, (SCREEN_WIDTH // 2 - attack_text.get_width() // 2, 520))
+            self.screen.blit(attack_text, (SCREEN_WIDTH // 2 - attack_text.get_width() // 2, SCREEN_HEIGHT // 2))
         
         turn_text = self.font_small.render(f"Turn: {battle.turn_count}", True, COLORS['text_dark'])
         self.screen.blit(turn_text, (SCREEN_WIDTH - 100, SCREEN_HEIGHT - 30))
