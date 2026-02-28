@@ -85,7 +85,8 @@ class DinoMergeApp:
             if slot:
                 from_row, from_col = self.drag_from_pos
                 to_row, to_col = slot
-                self.game.grid.move_dinosaur(from_row, from_col, to_row, to_col)
+                if (from_row, from_col) != (to_row, to_col):
+                    self.game.grid.move_dinosaur(from_row, from_col, to_row, to_col)
         
         self.dragging_dino = None
         self.drag_from_pos = None

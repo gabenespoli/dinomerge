@@ -152,13 +152,7 @@ class Renderer:
         text_rect = text_surf.get_rect(center=(x + width // 2, y + height // 2))
         self.screen.blit(text_surf, text_rect)
         
-        if is_hovered and enabled:
-            for event in pygame.event.get(pygame.MOUSEBUTTONDOWN):
-                if event.button == 1 and callback:
-                    callback()
-                    return True
-        
-        return False
+        return is_hovered and enabled
     
     def draw_army_view(self, game: DinoMergeGame):
         self.draw_background()
