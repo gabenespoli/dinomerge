@@ -1,7 +1,7 @@
 from enum import Enum
 from src.grid import Grid
 from src.dinosaur import Dinosaur
-from src.constants import MAX_LEVEL
+from src.constants import MAX_LEVEL, GRID_WIDTH, FRONT_LINE_COLS
 
 
 class GameState(Enum):
@@ -25,9 +25,10 @@ class DinoMergeGame:
         self.generate_enemy_army(self.current_level)
     
     def initialize_starting_army(self):
+        front_col_start = GRID_WIDTH - FRONT_LINE_COLS
         for i in range(3):
-            col = i % self.grid.width
-            row = i // self.grid.width
+            col = front_col_start + (i % FRONT_LINE_COLS)
+            row = i // FRONT_LINE_COLS
             dino = Dinosaur(1)
             self.grid.place_dinosaur(row, col, dino)
     
@@ -43,13 +44,13 @@ class DinoMergeGame:
         return False
     
     def generate_enemy_army(self, level: int):
-        from src.constants import ENEMY_ARMIES
+        from src.constants import ENEMY_ARMIES, FRONT_LINE_COLS
         self.enemy_grid.clear()
         enemy_levels = ENEMY_ARMIES.get(level, [level])
         
         for i, level in enumerate(enemy_levels):
-            col = i % self.enemy_grid.width
-            row = i // self.enemy_grid.width
+            col = i % FRONT_LINE_COLS
+            row = i // FRONT_LINE_COLS
             dino = Dinosaur(level)
             dino.is_enemy = True
             self.enemy_grid.place_dinosaur(row, col, dino)
